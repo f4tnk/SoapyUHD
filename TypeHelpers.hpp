@@ -7,6 +7,7 @@
 #include <uhd/types/device_addr.hpp>
 #include <uhd/types/ranges.hpp>
 #include <uhd/types/sensors.hpp>
+#include <string>
 #include <vector>
 
 #define SOAPY_UHD_NO_DEEPER "soapy_uhd_no_deeper"
@@ -18,9 +19,9 @@ static inline SoapySDR::Kwargs dictToKwargs(const uhd::device_addr_t &addr)
 {
     SoapySDR::Kwargs kwargs;
     const std::vector<std::string> keys = addr.keys();
-    for (size_t i = 0; i < keys.size(); i++)
+    for (const auto &key : keys)
     {
-        kwargs[keys[i]] = addr[keys[i]];
+        kwargs[key] = addr[key];
     }
     return kwargs;
 }
@@ -28,9 +29,9 @@ static inline SoapySDR::Kwargs dictToKwargs(const uhd::device_addr_t &addr)
 static inline uhd::device_addr_t kwargsToDict(const SoapySDR::Kwargs &kwargs)
 {
     uhd::device_addr_t addr;
-    for (SoapySDR::Kwargs::const_iterator it = kwargs.begin(); it != kwargs.end(); ++it)
+    for (const auto &pair : kwargs)
     {
-        addr[it->first] = it->second;
+        addr[pair.first] = pair.second;
     }
     return addr;
 }
@@ -136,8 +137,8 @@ static inline uhd::sensor_value_t argInfoToSensor(const SoapySDR::ArgInfo &argIn
     switch (argInfo.type)
     {
     case SoapySDR::ArgInfo::BOOL: return uhd::sensor_value_t(argInfo.name, value == "true", argInfo.units, argInfo.units);
-    case SoapySDR::ArgInfo::INT: return uhd::sensor_value_t(argInfo.name, atoi(value.c_str()), argInfo.units);
-    case SoapySDR::ArgInfo::FLOAT: return uhd::sensor_value_t(argInfo.name, atof(value.c_str()), argInfo.units);
+    case SoapySDR::ArgInfo::INT: return uhd::sensor_value_t(argInfo.name, std::stoi(value), argInfo.units);
+    case SoapySDR::ArgInfo::FLOAT: return uhd::sensor_value_t(argInfo.name, std::stod(value), argInfo.units);
     case SoapySDR::ArgInfo::STRING: return uhd::sensor_value_t(argInfo.name, value, argInfo.units);
     }
     return uhd::sensor_value_t(argInfo.name, value, argInfo.units);

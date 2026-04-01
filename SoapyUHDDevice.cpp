@@ -7,7 +7,6 @@
  **********************************************************************/
 
 #include "TypeHelpers.hpp"
-#include <boost/lexical_cast.hpp>
 #include <SoapySDR/Device.hpp>
 #include <SoapySDR/Registry.hpp>
 #include <SoapySDR/Logger.hpp>
@@ -20,7 +19,6 @@
 #endif
 #include <uhd/usrp/multi_usrp.hpp>
 #include <uhd/property_tree.hpp>
-#include <uhd/version.hpp>
 #include <cctype>
 #include <iostream>
 
@@ -369,6 +367,7 @@ public:
         case uhd::async_metadata_t::EVENT_CODE_UNDERFLOW_IN_PACKET: return SOAPY_SDR_UNDERFLOW;
         case uhd::async_metadata_t::EVENT_CODE_SEQ_ERROR_IN_BURST: return SOAPY_SDR_CORRUPTION;
         case uhd::async_metadata_t::EVENT_CODE_USER_PAYLOAD: break;
+        default: break;
         }
         return 0;
     }
@@ -508,7 +507,7 @@ public:
             return __doesMBoardFEPropTreeEntryExist(dir, channel, "iq_balance/enable");
         }
 
-        return SoapySDR::Device::hasDCOffsetMode(dir, channel);
+        return SoapySDR::Device::hasIQBalanceMode(dir, channel);
     }
 
     void setIQBalanceMode(const int dir, const size_t channel, const bool automatic)
@@ -614,13 +613,13 @@ public:
 
         if (args.count("OFFSET") != 0)
         {
-            tr = uhd::tune_request_t(frequency, boost::lexical_cast<double>(args.at("OFFSET")));
+            tr = uhd::tune_request_t(frequency, std::stod(args.at("OFFSET")));
         }
         if (args.count("RF") != 0)
         {
             try
             {
-                tr.rf_freq = boost::lexical_cast<double>(args.at("RF"));
+                tr.rf_freq = std::stod(args.at("RF"));
                 tr.rf_freq_policy = uhd::tune_request_t::POLICY_MANUAL;
             }
             catch (...)
@@ -632,7 +631,7 @@ public:
         {
             try
             {
-                tr.dsp_freq = boost::lexical_cast<double>(args.at("BB"));
+                tr.dsp_freq = std::stod(args.at("BB"));
                 tr.dsp_freq_policy = uhd::tune_request_t::POLICY_MANUAL;
             }
             catch (...)

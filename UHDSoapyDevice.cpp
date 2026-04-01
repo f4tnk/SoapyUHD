@@ -12,7 +12,6 @@
  **********************************************************************/
 
 #include "TypeHelpers.hpp"
-#include <boost/lexical_cast.hpp>
 #include <uhd/utils/static.hpp>
 #include <uhd/property_tree.hpp>
 #include <uhd/version.hpp>
@@ -76,7 +75,7 @@ public:
         uhd::usrp::subdev_spec_t spec;
         for (size_t ch = 0; ch < _device->getNumChannels(dir); ch++)
         {
-            const std::string chName(boost::lexical_cast<std::string>(ch));
+            const std::string chName(std::to_string(ch));
             spec.push_back(uhd::usrp::subdev_spec_pair_t(chName, chName));
         }
 
@@ -310,7 +309,7 @@ void UHDSoapyDevice::setupChannelHooks()
 
     for (size_t ch = 0; ch < numChannels; ch++)
     {
-        const std::string chName(boost::lexical_cast<std::string>(ch));
+        const std::string chName(std::to_string(ch));
         if (ch < numRxChannels)
             this->setupChannelHooks(SOAPY_SDR_RX, ch, kRxDirName, chName);
         else
@@ -722,7 +721,6 @@ private:
     const size_t _nchan;
     const size_t _elemSize;
     std::vector<void *> _offsetBuffs;
-    bool _doErrorOnNextRecv;
     bool _nextTimeValid;
     uhd::time_spec_t _nextTime;
     const double &_sampRate;
