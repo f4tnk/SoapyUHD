@@ -12,6 +12,7 @@
  **********************************************************************/
 
 #include "TypeHelpers.hpp"
+#include <boost/lexical_cast.hpp>
 #include <uhd/utils/static.hpp>
 #include <uhd/property_tree.hpp>
 #include <uhd/version.hpp>
