@@ -1077,15 +1077,14 @@ static void SoapyUHDLogger(const uhd::log::logging_info &info)
     //build a log message formatted from the information
     std::string message;
 
-    if (not info.file.empty())
-    {
-        std::string shortfile = info.file.substr(info.file.find_last_of("/\\") + 1);
-        message += "[" + shortfile + ":" + std::to_string(info.line) + "] ";
-    }
-
+    // Skip file:line — use [SoapyUHD] prefix + component only
     if (not info.component.empty())
     {
-        message += "[" + info.component + "] ";
+        message += "[SoapyUHD " + info.component + "] ";
+    }
+    else
+    {
+        message += "[SoapyUHD] ";
     }
 
     message += info.message;
